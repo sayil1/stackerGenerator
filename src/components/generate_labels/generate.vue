@@ -3,18 +3,32 @@
   <div>
     <v-container fluid>
       <v-row align="center">
-        <v-col class="d-flex" cols="12" sm="4"></v-col>
+       
         <v-col class="d-flex" cols="12" sm="4">
           <v-select
+            :items="exams"
+            label="Select Examination"
+            dense
+            v-model="exam"
+          ></v-select>
+        </v-col>
+         <v-col class="d-flex" cols="12" sm="4">
+           <v-select
             :items="items"
             label="Select the number of subjects as contained in the sheets"
             dense
             v-model="subjectsNo"
           ></v-select>
-          {{subjectsNo}}
-        </v-col>
+         </v-col>
+          <v-col class="d-flex" cols="12" sm="4">
+             <v-text-field
+            label="Enter Examination Year"
+            v-model="examyear"
+          ></v-text-field>
+          </v-col>
       </v-row>
     </v-container>
+   
     <div style="margin:20px">
       <v-alert
         type="info"
@@ -37,12 +51,14 @@
       </v-row>
     </v-container>
 
-    <!-- <div v-for="(n, index) in subjectsNo" v-bind:key="n.key" v-if="uploaded">
-      {{subs[0][index]}} see
-    </div>-->
+    <!-- <div
+      v-for="(n, index) in subjectsNo"
+      v-bind:key="n.key"
+      v-if="uploaded"
+    >{{subs[0][index][index]}} see</div> -->
 
     <label for="fileUploader" class="custom-file-upload">
-      <i class="fa fa-cloud-upload"></i> Custom Upload
+      <i class="fa fa-cloud-upload"></i>Upload Excel Sheet
     </label>
     <input
       type="file"
@@ -51,39 +67,96 @@
       accept=".xls, .xlsx"
       v-on:change="generate"
     />
-  
-    <div v-for="(data, index) in datas" v-bind:key="data.key">
-      <div class="table-div" v-if="uploaded">
-        <table
-          style="width:45%"
-          v-for="test in (Math.ceil(subject1[index]/50 ))"
-          v-bind:key="test.key"
-        >
-          <tr>
-            <th>Statesdsdsd:</th>
-            <td>{{data.state}}</td>
-          </tr>
-          <tr>
-            <th>Custodian Name:</th>
-            <td>{{data.sch_name}}</td>
-          </tr>
-          <tr>
-            <th>Custodian NO</th>
-            <td>{{data.eng}}</td>
-          </tr>
-          <tr>
-            <th>SCH/Center NO</th>
-            <td>{{data.eng}}</td>
-          </tr>
-          <tr>
-            <th>Subject/papper Name</th>
-            <td>{{data.eng}}</td>
-          </tr>
-          <tr v-if="subject1[index] > 50">
-            <th>Pack</th>
-            <td>{{subject1[index]}} of {{test}}</td>
-          </tr>
-        </table>
+
+    <div v-for="(n) in subjectsNo" v-bind:key="n.key" v-if="uploaded">
+      <div v-for="(data, index) in datas" v-bind:key="data.key">
+        <div>
+          <div class="table-div" v-if="uploaded">
+            <table
+              style="width:45%"
+              v-for="test in (Math.ceil(subject1[index]/50 ))"
+              v-bind:key="test.key"
+            >
+              <td colspan="2" v-if="exam == 'Neco'">
+                <div>
+                  <v-container class="grey lighten-5">
+                    <v-row no-gutters>
+                      <v-col cols="12" sm="4">
+                        <img src="../../assets/neco.jpeg" alt srcset />
+                      </v-col>
+                      <v-col cols="12" sm="8">
+                        <div style="margin:20px">National Examination Council (NECO)</div>
+                        <div style="margin:20px">{{examyear}}</div>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </div>
+              </td>
+              <td colspan="2" v-if="exam == 'Nabteb'">
+                <div>
+                  <v-container class="grey lighten-5">
+                    <v-row no-gutters>
+                      <v-col cols="12" sm="4">
+                        <img src="../../assets/nabteb.jpeg" alt srcset />
+                      </v-col>
+                      <v-col cols="12" sm="8">
+                        <div style="margin:20px">National Business and Technical Examinations Board (NABTEB) </div>
+                        <div style="margin:20px">{{examyear}}</div>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </div>
+              </td>
+              <td colspan="2" v-if="exam == 'Waec'">
+                <div>
+                  <v-container class="grey lighten-5">
+                    <v-row no-gutters>
+                      <v-col cols="12" sm="4">
+                        <img src="../../assets/waec.jpeg" alt srcset />
+                      </v-col>
+                      <v-col cols="12" sm="8">
+                        <div style="margin:20px">West African Examinations Council (WAEC)</div>
+                        <div style="margin:20px">{{examyear}}</div>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </div>
+              </td>
+              <tr>
+                <th>State:</th>
+                <td>{{data.state}}</td>
+              </tr>
+              <tr>
+                <th>Custodian Name:</th>
+                <td>{{data.sch_name}}</td>
+              </tr>
+              <tr>
+                <th>Custodian NO</th>
+                <td>{{data.cust_code}}</td>
+              </tr>
+              <tr>
+                <th>SCH/Center NO</th>
+                <td>{{data.schnum}}</td>
+              </tr>
+              <tr>
+                <th>Subject/papper Name</th>
+                <td>{{pricing.name[n-1]}}</td>
+              </tr>
+              <tr>
+                <th>No. Of copies</th>
+                <td>{{subs[0][0][index]}}</td>
+              </tr>
+              <tr v-if="subs[0][0][index] > 50">
+                <th>Pack</th>
+                <td>{{test}} of</td>
+              </tr>
+              <tr v-else>
+                <th>Pack</th>
+                <td>{{test}} of</td>
+              </tr>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -109,7 +182,12 @@ export default {
       subject1: [],
       subject2: [],
       subject3: [],
+      subject4: [],
+      subject5: [],
       items: [1, 2, 3, 4, 5, 6, 7, 8],
+      exams: ["Neco", "Nabteb", "Waec"],
+      exam: "",
+      examyear:'',
       pricing: {
         name: []
       }
@@ -134,6 +212,10 @@ export default {
           this.subject2.push(subject2);
           let subject3 = parseInt(Object.values(XL_row_object[i])[9], 10);
           this.subject3.push(subject3);
+          let subject4 = parseInt(Object.values(XL_row_object[i])[10], 10);
+          this.subject4.push(subject4);
+          let subject5 = parseInt(Object.values(XL_row_object[i])[11], 10);
+          this.subject5.push(subject5);
 
           // console.log(XL_row_object[x], "x");
           if (this.subject1[i] > 50) {
@@ -204,5 +286,8 @@ input[type="file"] {
   padding: 6px 12px;
   cursor: pointer;
   background-color: cyan;
+}
+img {
+  width: 150px;
 }
 </style>
