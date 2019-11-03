@@ -1,12 +1,13 @@
-
+<style  scoped src='./gen.css'>
+</style>
 <template >
   <div>
     <v-container fluid>
       <v-row align="center">
-        <v-col class="d-flex" cols="12" sm="3">
+        <v-col class="d-flex" cols="12" sm="4">
           <v-select :items="exams" label="Select Examination" dense v-model="exam"></v-select>
         </v-col>
-        <v-col class="d-flex" cols="12" sm="3">
+        <v-col class="d-flex" cols="12" sm="4">
           <v-select
             :items="items"
             label="Select the number of subjects as contained in the sheets"
@@ -14,16 +15,16 @@
             v-model="subjectsNo"
           ></v-select>
         </v-col>
-        <v-col class="d-flex" cols="12" sm="3">
+        <v-col class="d-flex" cols="12" sm="4">
           <v-text-field label="Enter Examination Year" v-model="examyear"></v-text-field>
         </v-col>
         <!-- <v-col class="d-flex" cols="12" sm="3">
           <v-select :items="items" label="Select the number of Sections" dense v-model="subjectsNo"></v-select>
         </v-col>-->
-        <v-col class="d-flex" cols="12" sm="3">
+        <v-col class="d-flex" cols="12" sm="6">
           <v-select :items="omrplus" label="Add or remove OMR" v-model="omrplus_" dense></v-select>
         </v-col>
-        <v-col class="d-flex" cols="12" sm="3">
+        <v-col class="d-flex" cols="12" sm="6">
           <v-select :items="sheetsPerDoc" label="Sheets Per Docket" v-model="sheetsPerDoc_" dense></v-select>
         </v-col>
       </v-row>
@@ -69,30 +70,37 @@
       v-bind:key="n.key"
       v-if="uploaded"
     >{{subs[0][index][index]}} see</div>-->
+<div class="buttons">
+   <div style="margin-right:20px; margin-left:20px">
+      <label for="fileUploader" class="custom-file-upload">
+        <i class="fa fa-cloud-upload"></i>Upload Excel Sheet
+      </label> 
+      <input
+        type="file"
+        id="fileUploader"
+        name="fileUploader"
+        accept=".xls, .xlsx"
+        v-on:change="generate"
+      />
+    </div>
 
-    <label for="fileUploader" class="custom-file-upload">
-      <i class="fa fa-cloud-upload"></i>Upload Excel Sheet
-    </label>
-    <input
-      type="file"
-      id="fileUploader"
-      name="fileUploader"
-      accept=".xls, .xlsx"
-      v-on:change="generate"
-    />
     <div class="text-center">
-    <v-btn rounded color="primary" v-on:click="print('print')" dark>Rounded Button</v-btn>
-  </div>
+      <v-btn rounded color="primary" v-on:click="print('print')" dark>Print</v-btn>
+    </div>
+
+</div>
+   
 
     <div id="print">
       <div v-for="(n) in subjectsNo" v-bind:key="n.key" v-if="uploaded">
         <div v-for="(data, index) in datas" v-bind:key="data.key">
-          <div>
-            <div class="table-div" v-if="uploaded">
+          <div v-if="subs[0][0][index]>0" >
+            <div  v-if="uploaded"  >
               <table
-                style="width:45%"
+               
                 v-for="(test) in (Math.ceil(subs[0][0][index]/sheetsPerDoc_))"
                 v-bind:key="test.key"
+
               >
                 <td colspan="2" v-if="exam == 'Neco'">
                   <div>
@@ -172,10 +180,7 @@
                   >{{subs[0][0][index]%sheetsPerDoc_}}</td>
                   <td v-else>{{sheetsPerDoc_}}</td>
                 </tr>
-                <tr>
-                  <th>Pack</th>
-                  <td>{{test}} of {{Math.ceil(subs[0][0][index]/sheetsPerDoc_)}}</td>
-                </tr>
+
                 <tr>
                   <th>OMR</th>
 
@@ -192,6 +197,10 @@
                     <div v-if="!pricing.section[n-1]">{{sheetsPerDoc_+omrplus_}}</div>
                     <div v-else>{{(pricing.section[n-1]*sheetsPerDoc_)+omr_}}</div>
                   </td>
+                </tr>
+                <tr>
+                  <th>Pack</th>
+                  <td>{{test}} of {{Math.ceil(subs[0][0][index]/sheetsPerDoc_)}}</td>
                 </tr>
               </table>
             </div>
@@ -216,7 +225,7 @@ export default {
       uploaded: false,
       subjectsNo: 1,
       subjectNames: {},
-      docketNum: "",
+      // docketNum: "",
       remainingCopies: 0,
       copiesPerDocket: "",
       subject1: [],
@@ -229,7 +238,7 @@ export default {
       subject8: [],
       subject9: [],
       subject10: [],
-      items: [1, 2, 3, 4, 5, 6, 7, 8],
+      items: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
       omrplus: [-5, -4, -3, -2, -1, +0, +1, +2, +3, +4, +5],
       omrplus_: 0,
       sheetsPerDoc: [50, 60, 70, 80, 90, 100, 110, 120],
@@ -241,7 +250,8 @@ export default {
       pricing: {
         name: [],
         section: []
-      }
+      },
+      isActive: false
     };
   },
   methods: {
@@ -277,43 +287,45 @@ export default {
           this.subject9.push(subject9);
           let subject10 = parseInt(Object.values(XL_row_object[i])[16], 10);
           this.subject5.push(subject10);
-
-          // console.log(XL_row_object[x], "x");
-          if (this.subject1[i] > this.sheetsPerDoc_) {
-            this.docketNum =
-              Math.ceil(this.subject1[i] / this.sheetsPerDoc_) + 1;
-            this.remainingCopies = this.subject1[i] % this.sheetsPerDoc_;
-            this.datas = XL_row_object;
-
-            console.log(this.subject1[i]);
-          } else {
-            this.datas = XL_row_object;
-          }
         }
-        let subs = [this.subject1, this.subject2, this.subject3];
-        console.log(subs, "subs");
-        console.log(this.datas);
+
+        let subs = [
+          this.subject1,
+          this.subject2,
+          this.subject3,
+          this.subject4,
+          this.subject5,
+          this.subject6,
+          this.subject7,
+          this.subject8,
+          this.subject9,
+          this.subject10
+        ];
+        // console.log(subs, "subs");
+        // console.log(this.datas);
         this.subs.push(subs);
 
         this.uploaded = true;
+      
 
         //  console.log(ages);
         // console.log(this.subject1, this.subject2);
+        this.datas = XL_row_object;
+        console.log(this.datas);
       }
     },
     print(divName) {
       var printContents = document.getElementById(divName).innerHTML;
-			var originalContents = document.body.innerHTML;
-			document.body.innerHTML = printContents;
-			window.print();
-			document.body.innerHTML = originalContents;
+      var originalContents = document.body.innerHTML;
+      document.body.innerHTML = printContents;
+      window.print();
+      document.body.innerHTML = originalContents;
     },
 
     generate(evt) {
       var selectedFile = evt.target.files[0];
       var reader = new FileReader();
       reader.onload = this.loader;
-
       reader.onerror = function(event) {
         console.error(
           "File could not be read! Code " + event.target.error.code
@@ -327,35 +339,3 @@ export default {
 };
 </script>
 
-<style  scoped>
-.table-div {
-  margin-top: 50px;
-  margin-left: 50px;
-  display: flex;
-}
-
-table,
-th,
-td {
-  border: 1px solid black;
-  border-collapse: collapse;
-}
-th,
-td {
-  padding: 5px;
-  text-align: left;
-}
-input[type="file"] {
-  display: none;
-}
-.custom-file-upload {
-  border: 1px solid #ccc;
-  display: inline-block;
-  padding: 6px 12px;
-  cursor: pointer;
-  background-color: cyan;
-}
-img {
-  width: 150px;
-}
-</style>
