@@ -42,10 +42,15 @@
     display: inline-block;
     padding: 6px 12px;
     cursor: pointer;
-    background-color: cyan;
+    background-color: rgb(23, 131, 131);
   }
   img {
-    width: 150px;
+    width:80px;
+   height:80px;
+
+/*Scale down will take the necessary specified space that is 100px x 100px without stretching the image*/
+    object-fit:scale-down;
+
   }
   /* #print {
    display:none
