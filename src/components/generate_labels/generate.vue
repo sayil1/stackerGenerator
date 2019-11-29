@@ -70,37 +70,33 @@
       v-bind:key="n.key"
       v-if="uploaded"
     >{{subs[0][index][index]}} see</div>-->
-<div class="buttons">
-   <div style="margin-right:20px; margin-left:20px">
-      <label for="fileUploader" class="custom-file-upload">
-        <i class="fa fa-cloud-upload"></i>Upload Excel Sheet
-      </label> 
-      <input
-        type="file"
-        id="fileUploader"
-        name="fileUploader"
-        accept=".xls, .xlsx"
-        v-on:change="generate"
-      />
-    </div>
+    <div class="buttons">
+      <div style="margin-right:20px; margin-left:20px">
+        <label for="fileUploader" class="custom-file-upload">
+          <i class="fa fa-cloud-upload"></i>Upload Excel Sheet
+        </label>
+        <input
+          type="file"
+          id="fileUploader"
+          name="fileUploader"
+          accept=".xls, .xlsx"
+          v-on:change="generate"
+        />
+      </div>
 
-    <div class="text-center">
-      <v-btn rounded color="primary" v-on:click="print('print')" dark>Print</v-btn>
+      <div class="text-center">
+        <v-btn rounded color="primary" v-on:click="print('print')" dark>Print</v-btn>
+      </div>
     </div>
-
-</div>
-   
 
     <div id="print">
       <div v-for="(n) in subjectsNo" v-bind:key="n.key" v-if="uploaded">
         <div v-for="(data, index) in datas" v-bind:key="data.key">
-          <div v-if="subs[0][0][index]>0" >
-            <div  v-if="uploaded"  >
+          <div v-if="subs[0][0][index]>0">
+            <div v-if="uploaded">
               <table
-               
                 v-for="(test) in (Math.ceil(subs[0][0][index]/sheetsPerDoc_))"
                 v-bind:key="test.key"
-
               >
                 <td colspan="2" v-if="exam == 'Neco'">
                   <div>
@@ -155,11 +151,15 @@
                 </tr>
                 <tr>
                   <th>Custodian Name:</th>
-                  <td>{{data.sch_name}}</td>
+                  <td>{{data.custodian}}</td>
                 </tr>
                 <tr>
                   <th>Custodian NO</th>
                   <td>{{data.cust_code}}</td>
+                </tr>
+                <tr>
+                  <th>SCH/Center Name</th>
+                  <td>{{data.sch_name}}</td>
                 </tr>
                 <tr>
                   <th>SCH/Center NO</th>
@@ -306,7 +306,6 @@ export default {
         this.subs.push(subs);
 
         this.uploaded = true;
-      
 
         //  console.log(ages);
         // console.log(this.subject1, this.subject2);
@@ -314,12 +313,37 @@ export default {
         console.log(this.datas);
       }
     },
+
     print(divName) {
+      // var printContent = document.getElementById(divName);
+      // var WinPrint = window.open('', '', 'width=900,height=650');
+      // WinPrint.document.write(printContent.innerHTML);
+      // WinPrint.document.close();
+      // WinPrint.focus();
+      // WinPrint.print();
+      // WinPrint.close();
+
       var printContents = document.getElementById(divName).innerHTML;
       var originalContents = document.body.innerHTML;
       document.body.innerHTML = printContents;
       window.print();
       document.body.innerHTML = originalContents;
+
+      // var header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' "+
+      //       "xmlns:w='urn:schemas-microsoft-com:office:word' "+
+      //       "xmlns='http://www.w3.org/TR/REC-html40'>"+
+      //       "<head><meta charset='utf-8'><title>Export HTML to Word Document with JavaScript</title></head><body>";
+      //  var footer = "</body></html>";
+      //  var sourceHTML = header+document.getElementById("print").innerHTML+footer;
+
+      //  var source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
+      //  var fileDownload = document.createElement("a");
+      //  document.body.appendChild(fileDownload);
+      //  fileDownload.href = source;
+      //  fileDownload.download = 'document.doc';
+      //  fileDownload.click();
+      //  document.body.removeChild(fileDownload);
+      //  this.test = "kjbjebdbediedfefdjbiubieufe"
     },
 
     generate(evt) {
@@ -333,6 +357,7 @@ export default {
       };
 
       reader.readAsBinaryString(selectedFile);
+      console.l;
     }
   },
   computed: {}
